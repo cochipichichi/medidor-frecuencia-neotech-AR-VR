@@ -37,7 +37,7 @@ body {
   margin-top: 0;
 }
 .controls button {
-  background: #1d4ed8;
+  background: #22c55e;
   color: #fff;
   border: none;
   border-radius: .6rem;
@@ -58,6 +58,13 @@ body {
   background: rgba(15,23,42,.35);
   border-radius: .6rem;
   padding: .5rem .5rem .4rem;
+}
+.xr-buttons h3 {
+  margin-top: 0;
+  font-size: .8rem;
+  display: flex;
+  gap: .3rem;
+  align-items: center;
 }
 .xr {
   border: none;

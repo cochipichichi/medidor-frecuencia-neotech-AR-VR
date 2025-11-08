@@ -1,7 +1,6 @@
-// app.js - versión real con WebXR (si el navegador lo soporta)
+// app.js - versión con malla reactiva
 import * as THREE from "https://unpkg.com/three@0.161.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.161.0/examples/jsm/controls/OrbitControls.js";
-import { XRButton } from "https://unpkg.com/three@0.161.0/examples/jsm/webxr/XRButton.js";
 
 const canvas = document.getElementById("three-canvas");
 const btnMic = document.getElementById("btn-mic");
@@ -18,6 +17,7 @@ let bars = [];
 let currentBins = parseInt(binsEl.value, 10);
 let audioCtx = null;
 let sourceNode = null;
+let wavePlane, wavePlaneGeo;
 
 // init three
 init3D();
@@ -28,7 +28,7 @@ function init3D() {
   scene.background = new THREE.Color(0x000000);
 
   camera = new THREE.PerspectiveCamera(65, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-  camera.position.set(0, 2.5, 5);
+  camera.position.set(0, 2.6, 5);
 
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   resizeRenderer();
@@ -38,17 +38,26 @@ function init3D() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
 
-  // luz
+  // luces
   const ambient = new THREE.AmbientLight(0xffffff, 0.7);
   scene.add(ambient);
-  const dir = new THREE.DirectionalLight(0xffffff, 1);
+  const dir = new THREE.DirectionalLight(0xffffff, 1.1);
   dir.position.set(3, 5, 2);
   scene.add(dir);
 
-  // base
-  const grid = new THREE.GridHelper(8, 16, 0x2dd4bf, 0x0f172a);
-  grid.position.y = -0.01;
-  scene.add(grid);
+  // malla base "que se vea bacán"
+  wavePlaneGeo = new THREE.PlaneGeometry(6, 6, 48, 48);
+  const waveMat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color("hsl(200, 80%, 35%)"),
+    wireframe: true,
+    emissive: 0x001122,
+    metalness: 0.1,
+    roughness: 0.6
+  });
+  wavePlane = new THREE.Mesh(wavePlaneGeo, waveMat);
+  wavePlane.rotation.x = -Math.PI / 2;
+  wavePlane.position.y = -0.2;
+  scene.add(wavePlane);
 
   createBars(currentBins);
 
@@ -56,10 +65,8 @@ function init3D() {
 }
 
 function createBars(count) {
-  // clean previous
   bars.forEach(b => scene.remove(b));
   bars = [];
-  // place them in a circle
   const radius = 1.6;
   for (let i = 0; i < count; i++) {
     const geo = new THREE.BoxGeometry(0.08, 0.5, 0.08);
@@ -113,15 +120,15 @@ binsEl.addEventListener("input", () => {
   createBars(currentBins);
 });
 
-// XR buttons (real)
+// --- XR reales ---
 btnAR.addEventListener("click", async () => {
   if (!navigator.xr) {
-    xrStatus.textContent = "navigator.xr no disponible (usa HTTPS / navegador con WebXR)";
+    xrStatus.textContent = "navigator.xr no disponible (HTTPS / WebXR necesario)";
     return;
   }
   const supported = await navigator.xr.isSessionSupported("immersive-ar");
   if (!supported) {
-    xrStatus.textContent = "AR no soportado en este dispositivo/navegador.";
+    xrStatus.textContent = "AR no soportado aquí.";
     return;
   }
   xrStatus.textContent = "Iniciando AR...";
@@ -138,7 +145,7 @@ btnAR.addEventListener("click", async () => {
 
 btnVR.addEventListener("click", async () => {
   if (!navigator.xr) {
-    xrStatus.textContent = "navigator.xr no disponible (usa HTTPS / navegador con WebXR)";
+    xrStatus.textContent = "navigator.xr no disponible (HTTPS / WebXR necesario)";
     return;
   }
   const supported = await navigator.xr.isSessionSupported("immersive-vr");
@@ -162,21 +169,39 @@ function animate() {
   renderer.setAnimationLoop(render);
 }
 
+let t = 0;
 function render() {
-  // actualizar espectro
+  t += 0.015;
+
+  let audioLevel = 0;
   if (analyser && dataArray) {
     analyser.getByteFrequencyData(dataArray);
-    // usamos solo los primeros currentBins valores
     for (let i = 0; i < currentBins; i++) {
       const mesh = bars[i];
       if (!mesh) continue;
-      const v = dataArray[i] / 255; // 0 - 1
+      const v = dataArray[i] / 255;
       const h = 0.4 + v * 3.5;
       mesh.scale.y = h;
       mesh.position.y = h / 2;
-      // levísimo pulso
       mesh.rotation.y += 0.002 + v * 0.01;
+      audioLevel += v;
     }
+    audioLevel = audioLevel / currentBins;
+  }
+
+  // animar malla con un poco de audio
+  if (wavePlaneGeo) {
+    const pos = wavePlaneGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+      const dist = Math.sqrt(x * x + z * z);
+      const wave = Math.sin(dist * 2.5 - t * 4) * 0.12;
+      const audioBump = audioLevel ? audioLevel * 0.35 * Math.cos(dist * 3 - t * 5) : 0;
+      pos.setY(i, wave + audioBump);
+    }
+    pos.needsUpdate = true;
+    wavePlaneGeo.computeVertexNormals();
   }
 
   controls.update();

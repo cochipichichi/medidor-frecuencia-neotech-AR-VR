@@ -9,28 +9,33 @@
 <body>
   <header class="topbar">
     <h1>🎛️ Medidor de frecuencia 3D</h1>
-    <p>Versión con AR / VR reales (usa navegador con WebXR + HTTPS).</p>
+    <p>Versión AR / VR con malla reactiva.</p>
   </header>
 
   <main class="layout">
     <section class="controls">
       <h2>Controles</h2>
+
       <button id="btn-mic">🎙️ Activar micrófono</button>
+
       <label>
-        Suavizado
+        🪄 Suavizado
         <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.6" />
       </label>
+
       <label>
-        Barras
+        📶 Barras
         <input id="bins" type="range" min="16" max="96" step="8" value="48" />
       </label>
+
       <div class="xr-buttons">
-        <h3>Realidad extendida</h3>
+        <h3>🌐 Realidad extendida</h3>
         <button id="btn-ar" class="xr ar">🟣 AR</button>
         <button id="btn-vr" class="xr vr">🟠 VR</button>
         <p id="xr-status" class="xr-status">Sin sesión XR</p>
       </div>
-      <p class="note">AR/VR requiere que esta página esté servida por HTTPS y que el dispositivo tenga WebXR (tu Note 10+ sí lo tiene 😉).</p>
+
+      <p class="note">AR/VR requiere HTTPS y navegador con WebXR.</p>
     </section>
 
     <section class="view">
