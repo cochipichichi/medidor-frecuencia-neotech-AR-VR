@@ -2,17 +2,24 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Medidor de Frecuencia 3D · AR / VR</title>
+  <title>Neotech · Visualizador Sonoro AR/VR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="topbar">
-    <h1>🎛️ Medidor de frecuencia 3D</h1>
-    <p>Versión AR / VR con malla reactiva.</p>
+    <h1>📡 Neotech · Visualizador sonoro</h1>
   </header>
 
-  <main class="layout">
+  <!-- pantalla inicial -->
+  <section class="hero" id="hero">
+    <p>Explora el espectro de sonido en 3D, con malla reactiva y soporte AR/VR.</p>
+    <button id="open-viewer" class="primary">🎛️ Abrir visualizador 3D</button>
+    <p class="hint">Tu dispositivo debe soportar WebXR para AR/VR.</p>
+  </section>
+
+  <!-- viewer oculto -->
+  <main class="layout hidden" id="viewer">
     <section class="controls">
       <h2>Controles</h2>
 
@@ -34,6 +41,8 @@
         <button id="btn-vr" class="xr vr">🟠 VR</button>
         <p id="xr-status" class="xr-status">Sin sesión XR</p>
       </div>
+
+      <button id="close-viewer" class="secondary">⬅️ Volver</button>
 
       <p class="note">AR/VR requiere HTTPS y navegador con WebXR.</p>
     </section>

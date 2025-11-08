@@ -1,6 +1,11 @@
-// app.js - versión con malla reactiva
+// app.js - viewer 3D con malla reactiva y AR/VR, mostrado al hacer click
 import * as THREE from "https://unpkg.com/three@0.161.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.161.0/examples/jsm/controls/OrbitControls.js";
+
+const hero = document.getElementById("hero");
+const viewer = document.getElementById("viewer");
+const openViewer = document.getElementById("open-viewer");
+const closeViewer = document.getElementById("close-viewer");
 
 const canvas = document.getElementById("three-canvas");
 const btnMic = document.getElementById("btn-mic");
@@ -14,14 +19,25 @@ let scene, camera, renderer, controls;
 let analyser = null;
 let dataArray = null;
 let bars = [];
-let currentBins = parseInt(binsEl.value, 10);
+let currentBins = 48;
 let audioCtx = null;
 let sourceNode = null;
 let wavePlane, wavePlaneGeo;
 
-// init three
-init3D();
-animate();
+openViewer.addEventListener("click", () => {
+  hero.classList.add("hidden");
+  viewer.classList.remove("hidden");
+  if (!window.__threeInited) {
+    init3D();
+    animate();
+    window.__threeInited = true;
+  }
+});
+
+closeViewer.addEventListener("click", () => {
+  viewer.classList.add("hidden");
+  hero.classList.remove("hidden");
+});
 
 function init3D() {
   scene = new THREE.Scene();
@@ -38,14 +54,13 @@ function init3D() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
 
-  // luces
   const ambient = new THREE.AmbientLight(0xffffff, 0.7);
   scene.add(ambient);
   const dir = new THREE.DirectionalLight(0xffffff, 1.1);
   dir.position.set(3, 5, 2);
   scene.add(dir);
 
-  // malla base "que se vea bacán"
+  // malla reactiva
   wavePlaneGeo = new THREE.PlaneGeometry(6, 6, 48, 48);
   const waveMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color("hsl(200, 80%, 35%)"),
@@ -91,7 +106,7 @@ function resizeRenderer() {
   camera.updateProjectionMatrix();
 }
 
-// mic
+// micrófono
 btnMic.addEventListener("click", async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -111,16 +126,14 @@ btnMic.addEventListener("click", async () => {
 });
 
 smoothingEl.addEventListener("input", () => {
-  if (analyser) {
-    analyser.smoothingTimeConstant = parseFloat(smoothingEl.value);
-  }
+  if (analyser) analyser.smoothingTimeConstant = parseFloat(smoothingEl.value);
 });
 binsEl.addEventListener("input", () => {
   currentBins = parseInt(binsEl.value, 10);
   createBars(currentBins);
 });
 
-// --- XR reales ---
+// AR real
 btnAR.addEventListener("click", async () => {
   if (!navigator.xr) {
     xrStatus.textContent = "navigator.xr no disponible (HTTPS / WebXR necesario)";
@@ -143,6 +156,7 @@ btnAR.addEventListener("click", async () => {
   }
 });
 
+// VR real
 btnVR.addEventListener("click", async () => {
   if (!navigator.xr) {
     xrStatus.textContent = "navigator.xr no disponible (HTTPS / WebXR necesario)";
@@ -189,7 +203,7 @@ function render() {
     audioLevel = audioLevel / currentBins;
   }
 
-  // animar malla con un poco de audio
+  // animar malla
   if (wavePlaneGeo) {
     const pos = wavePlaneGeo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
