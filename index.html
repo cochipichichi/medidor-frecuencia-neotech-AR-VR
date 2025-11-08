@@ -17,7 +17,6 @@
     </div>
     <div class="top-actions">
       <button class="ghost-btn" id="open-viewer-nav">🎛️ Abrir visualizador</button>
-      <!-- controles inclusivos -->
       <div class="inclusive-controls">
         <button id="btn-home" title="Ir arriba">🏠</button>
         <button id="btn-voice" title="Leer pantalla">🗣️</button>
@@ -31,13 +30,13 @@
     </div>
   </header>
 
-  <!-- pantalla inicial -->
   <section class="hero" id="hero">
     <div class="hero-content">
       <h2 data-i18n="hero-title">Visualizador de frecuencia 3D</h2>
       <p class="hero-sub" data-i18n="hero-sub">
         Analiza el audio del micrófono, míralo como una malla viva y lánzalo a AR o VR si tu dispositivo lo soporta.
       </p>
+      <div id="xr-badge" class="xr-badge xr-unknown">Detectando soporte XR…</div>
       <div class="hero-actions">
         <button id="open-viewer" class="primary">🎛️ <span data-i18n="open-viewer">Abrir visualizador 3D</span></button>
         <button class="secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
@@ -62,7 +61,6 @@
     </div>
   </section>
 
-  <!-- FEATURES -->
   <section class="features" id="features">
     <article class="feature">
       <h3>🎙️ <span data-i18n="feat1-title">Captura en vivo</span></h3>
@@ -78,12 +76,12 @@
     </article>
   </section>
 
-  <!-- VIEWER (oculto) -->
   <main class="layout hidden" id="viewer">
     <section class="controls">
       <h2 data-i18n="panel-title">Panel de control</h2>
 
       <button id="btn-mic">🎙️ <span data-i18n="btn-mic">Activar micrófono</span></button>
+      <button id="btn-demo" class="secondary block">🎧 <span data-i18n="btn-demo">Modo demo (sin micro)</span></button>
 
       <label>
         🪄 <span data-i18n="lbl-smoothing">Suavizado</span>
@@ -95,11 +93,23 @@
         <input id="bins" type="range" min="16" max="96" step="8" value="48" />
       </label>
 
+      <div class="preset-box">
+        <h3>🎨 <span data-i18n="presets">Presets visuales</span></h3>
+        <button id="preset-rainbow" class="tiny-btn">🌈</button>
+        <button id="preset-dense" class="tiny-btn">🕸️</button>
+        <button id="preset-space" class="tiny-btn">🔭</button>
+      </div>
+
       <div class="xr-buttons">
         <h3>🌐 <span data-i18n="xr-title">Realidad extendida</span></h3>
         <button id="btn-ar" class="xr ar">🟣 AR</button>
         <button id="btn-vr" class="xr vr">🟠 VR</button>
         <p id="xr-status" class="xr-status" data-i18n="xr-status">Sin sesión XR</p>
+      </div>
+
+      <div class="event-log">
+        <h3>📜 <span data-i18n="events">Eventos</span></h3>
+        <ul id="event-log-list"></ul>
       </div>
 
       <button id="close-viewer" class="secondary block">⬅️ <span data-i18n="back">Volver al inicio</span></button>

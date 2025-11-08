@@ -129,6 +129,28 @@ body {
   opacity: .4;
   margin-top: .9rem;
 }
+.xr-badge {
+  display: inline-block;
+  font-size: .65rem;
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  margin-top: .5rem;
+}
+.xr-ok {
+  background: rgba(34,197,94,.1);
+  border: 1px solid rgba(34,197,94,.4);
+  color: #bbf7d0;
+}
+.xr-bad {
+  background: rgba(248,113,113,.1);
+  border: 1px solid rgba(248,113,113,.4);
+  color: #fecaca;
+}
+.xr-unknown {
+  background: rgba(148,163,184,.07);
+  border: 1px solid rgba(148,163,184,.25);
+  color: #e2e8f0;
+}
 .hero-preview {
   flex: .8;
   display: flex;
@@ -190,7 +212,7 @@ body {
   min-height: 0;
 }
 .controls {
-  width: 290px;
+  width: 300px;
   background: rgba(15,23,42,.45);
   border: 1px solid rgba(148,163,184,.08);
   border-radius: .9rem;
@@ -213,6 +235,20 @@ body {
 }
 .controls input[type="range"] {
   width: 100%;
+}
+.preset-box {
+  margin-top: .5rem;
+  background: rgba(15,23,42,.35);
+  border-radius: .6rem;
+  padding: .4rem .5rem .4rem;
+}
+.tiny-btn {
+  background: rgba(248,250,252,.02);
+  border: 1px solid rgba(248,250,252,.08);
+  border-radius: .35rem;
+  padding: .35rem .5rem;
+  cursor: pointer;
+  margin-right: .3rem;
 }
 .xr-buttons {
   margin-top: .8rem;
@@ -241,6 +277,25 @@ body {
   opacity: .7;
   margin-top: .35rem;
 }
+.event-log {
+  margin-top: .6rem;
+  background: rgba(2,6,23,.25);
+  border: 1px solid rgba(148,163,184,.04);
+  border-radius: .6rem;
+  padding: .35rem .5rem .35rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.event-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: .65rem;
+}
+.event-log li {
+  border-bottom: 1px solid rgba(148,163,184,.03);
+  padding: .2rem 0;
+}
 .view {
   flex: 1;
   background: #000;
@@ -257,18 +312,22 @@ body {
 .search-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.45);
+  background: rgba(0,0,0,.65);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 50;
 }
-.search-overlay.show { display: flex; }
+.search-overlay.show {
+  display: flex;
+}
 .search-box {
   background: rgba(15,23,42,1);
   padding: .9rem;
   border-radius: 1rem;
   width: min(90%, 350px);
+  display: flex;
+  gap: .5rem;
 }
 .footer {
   text-align: center;
@@ -286,6 +345,7 @@ body.theme-light {
   background: #f8fafc;
   color: #0f172a;
 }
+body.no-scroll { overflow: hidden; }
 @media (max-width: 950px) {
   .hero { flex-direction: column; }
   .layout { flex-direction: column; }
