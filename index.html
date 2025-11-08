@@ -2,135 +2,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <title>Medidor de Frecuencia 3D · AR / VR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Medidor de Frecuencia — Neotech EduLab v2</title>
   <link rel="stylesheet" href="style.css" />
-  <meta name="theme-color" content="#0f172a" />
 </head>
-<body class="theme-dark">
+<body>
   <header class="topbar">
-    <div class="logo">🎛️ Frecuencia Neotech</div>
-    <nav class="controls">
-      <button id="btn-home" title="Inicio">🏠</button>
-      <button id="btn-voz" title="Leer frecuencia">🗣️</button>
-      <button id="btn-theme" title="Tema claro/oscuro">🌓</button>
-      <button id="btn-plus" title="Aumentar texto">A+</button>
-      <button id="btn-minus" title="Disminuir texto">A−</button>
-      <button id="btn-lang" title="Cambiar idioma">🌐</button>
-      <button id="btn-focus" title="Modo atención">🧠</button>
-      <button id="btn-search" title="Buscar">🔍</button>
-    </nav>
+    <h1>🎛️ Medidor de frecuencia 3D</h1>
+    <p>Versión con AR / VR reales (usa navegador con WebXR + HTTPS).</p>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <h1 data-i18n="title">📡 Medidor de frecuencia (2D + 3D)</h1>
-      <p data-i18n="subtitle">Selector de micrófono, rango ajustable, nota musical, 3D local, historial y exportación.</p>
-      <div class="btn-row">
-        <button id="btn-start" class="primary" data-i18n="start">🎙️ Iniciar medición</button>
-        <button id="btn-stop" class="secondary" disabled data-i18n="stop">⏹️ Detener</button>
-        <button id="btn-freeze" class="secondary" disabled>🧊 Congelar máx.</button>
-        <button id="btn-pause" class="secondary" disabled>⏸️ Pausar</button>
-        <button id="btn-export" class="csv" disabled>📤 Exportar CSV</button>
-        <button id="btn-mode" class="secondary">👨‍🏫 Modo docente</button>
-        <button id="btn-toggle-3d" class="secondary">🧱 3D ON/OFF</button>
-      </div>
-      <div class="device-row">
-        <label for="inputDevice">🎤 Mic:</label>
-        <select id="inputDevice"></select>
-
-        <label for="rangeMode">📏 Rango:</label>
-        <select id="rangeMode">
-          <option value="voice">Voz (80–1200 Hz)</option>
-          <option value="music" selected>Instrumentos (50–4000 Hz)</option>
-          <option value="full">Completo</option>
-        </select>
-
-        <label for="perfMode">⚙️ Rend:</label>
-        <select id="perfMode">
-          <option value="high">Alto</option>
-          <option value="medium" selected>Medio</option>
-          <option value="low">Bajo</option>
-        </select>
-      </div>
-
-      <div class="level-row">
-        <span>🔊 Nivel de entrada:</span>
-        <div class="level-bar">
-          <div id="level-fill"></div>
-        </div>
-        <span id="level-text">-- dB</span>
-      </div>
-    </section>
-
-    <section class="freq-wrapper" id="lab-panel">
-      <div class="freq-display current">
-        <span>Frecuencia actual:</span>
-        <div id="freq-value">-- Hz</div>
-        <div id="note-value" class="note-value">--</div>
-      </div>
-      <div class="freq-display max">
-        <span>Frecuencia máxima:</span>
-        <div id="freq-max">-- Hz</div>
-      </div>
-      <div class="freq-display current">
-        <span>Muestras:</span>
-        <div id="freq-samples">0</div>
-      </div>
-    </section>
-
-    <section class="panel collapsible">
-      <button id="help-toggle" class="help-toggle">❓ ¿Qué estoy viendo?</button>
-      <div id="help-content" class="help-content">
-        <p>Este sitio mide el sonido del micrófono en tiempo real, detecta la frecuencia más fuerte (en Hz), la muestra arriba y dibuja el espectro en 2D y 3D. Además estima la nota musical más cercana y te deja exportar los datos.</p>
-      </div>
-    </section>
-
-    <section class="graph-card">
-      <h2>📈 Espectro 2D</h2>
-      <canvas id="freqCanvas" width="900" height="220"></canvas>
-    </section>
-
-    <section class="graph-card" id="card-3d">
-      <h2>🧊 Espectro 3D en tiempo real</h2>
-      <div id="scene3d" class="scene3d">
-        <span id="scene3d-fallback" class="fallback">Cargando 3D… (verifica /libs)</span>
-      </div>
-    </section>
-
-    <section class="history-card" id="history-card">
-      <h2>🕒 Historial reciente</h2>
-      <table>
-        <thead><tr><th>#</th><th>ms</th><th>Hz</th><th>Hz máx.</th><th>Nota</th></tr></thead>
-        <tbody id="history-body"></tbody>
-      </table>
-    </section>
-  
-    <section class="xr-panel">
-      <h2>Realidad extendida</h2>
-      <p>Visualiza el Espectro 3D en AR/VR (requiere dispositivo compatible).</p>
+  <main class="layout">
+    <section class="controls">
+      <h2>Controles</h2>
+      <button id="btn-mic">🎙️ Activar micrófono</button>
+      <label>
+        Suavizado
+        <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.6" />
+      </label>
+      <label>
+        Barras
+        <input id="bins" type="range" min="16" max="96" step="8" value="48" />
+      </label>
       <div class="xr-buttons">
-        <button id="btn-ar" class="xr-btn">🟣 Modo AR</button>
-        <button id="btn-vr" class="xr-btn">🟠 Modo VR</button>
-        <span id="xr-status" class="xr-status"></span>
+        <h3>Realidad extendida</h3>
+        <button id="btn-ar" class="xr ar">🟣 AR</button>
+        <button id="btn-vr" class="xr vr">🟠 VR</button>
+        <p id="xr-status" class="xr-status">Sin sesión XR</p>
       </div>
+      <p class="note">AR/VR requiere que esta página esté servida por HTTPS y que el dispositivo tenga WebXR (tu Note 10+ sí lo tiene 😉).</p>
     </section>
 
-</main>
-
-  <div class="search-overlay" id="search-overlay">
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="Buscar en la página..." />
-      <button id="search-close">Cerrar</button>
-    </div>
-  </div>
+    <section class="view">
+      <canvas id="three-canvas"></canvas>
+    </section>
+  </main>
 
   <footer class="footer">
-    <p>📚© Neotech EduLab — Educación Inmersiva<br/>🛠️Prohibida su copia y/o reproducción</p>
+    📚© Neotech EduLab — Educación Inmersiva · 🛠️Prohibida su copia y/o reproducción
   </footer>
 
-  <script src="./libs/three.min.js"></script>
-  <script src="./libs/OrbitControls.js"></script>
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
