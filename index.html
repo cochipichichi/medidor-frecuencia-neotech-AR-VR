@@ -6,51 +6,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="theme-dark">
   <header class="topbar">
-    <h1>📡 Neotech · Visualizador sonoro</h1>
+    <div class="brand">
+      <span class="logo-badge">N</span>
+      <div class="brand-text">
+        <h1>Neotech</h1>
+        <p>Laboratorio de experiencias inmersivas</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="ghost-btn" id="open-viewer-nav">🎛️ Abrir visualizador</button>
+      <!-- controles inclusivos -->
+      <div class="inclusive-controls">
+        <button id="btn-home" title="Ir arriba">🏠</button>
+        <button id="btn-voice" title="Leer pantalla">🗣️</button>
+        <button id="btn-theme" title="Tema claro/oscuro">🌓</button>
+        <button id="btn-plus" title="Aumentar tamaño">A+</button>
+        <button id="btn-minus" title="Disminuir tamaño">A−</button>
+        <button id="btn-lang" title="Cambiar idioma">🌐</button>
+        <button id="btn-focus" title="Modo atención">🧠</button>
+        <button id="btn-search" title="Buscar">🔍</button>
+      </div>
+    </div>
   </header>
 
   <!-- pantalla inicial -->
   <section class="hero" id="hero">
-    <p>Explora el espectro de sonido en 3D, con malla reactiva y soporte AR/VR.</p>
-    <button id="open-viewer" class="primary">🎛️ Abrir visualizador 3D</button>
-    <p class="hint">Tu dispositivo debe soportar WebXR para AR/VR.</p>
+    <div class="hero-content">
+      <h2 data-i18n="hero-title">Visualizador de frecuencia 3D</h2>
+      <p class="hero-sub" data-i18n="hero-sub">
+        Analiza el audio del micrófono, míralo como una malla viva y lánzalo a AR o VR si tu dispositivo lo soporta.
+      </p>
+      <div class="hero-actions">
+        <button id="open-viewer" class="primary">🎛️ <span data-i18n="open-viewer">Abrir visualizador 3D</span></button>
+        <button class="secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+          📋 <span data-i18n="see-features">Ver características</span>
+        </button>
+      </div>
+      <p class="hero-hint" data-i18n="hero-hint">Recomendado: Chrome / Samsung Internet + HTTPS + Android con WebXR.</p>
+    </div>
+    <div class="hero-preview">
+      <div class="card-preview">
+        <p class="preview-title" data-i18n="preview-title">Espectro en tiempo real</p>
+        <div class="preview-bars">
+          <span style="--h:80%"></span>
+          <span style="--h:35%"></span>
+          <span style="--h:60%"></span>
+          <span style="--h:20%"></span>
+          <span style="--h:75%"></span>
+          <span style="--h:40%"></span>
+        </div>
+        <p class="preview-footer">🎙️ <span data-i18n="preview-footer">Entrada: Micrófono</span></p>
+      </div>
+    </div>
   </section>
 
-  <!-- viewer oculto -->
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <article class="feature">
+      <h3>🎙️ <span data-i18n="feat1-title">Captura en vivo</span></h3>
+      <p data-i18n="feat1-text">Toma el audio del micrófono y lo convierte en datos de frecuencia.</p>
+    </article>
+    <article class="feature">
+      <h3>🕸️ <span data-i18n="feat2-title">Malla reactiva</span></h3>
+      <p data-i18n="feat2-text">Una superficie wireframe que respira con el sonido.</p>
+    </article>
+    <article class="feature">
+      <h3>🌐 <span data-i18n="feat3-title">AR / VR</span></h3>
+      <p data-i18n="feat3-text">Botones dedicados para lanzar en WebXR si el navegador lo soporta.</p>
+    </article>
+  </section>
+
+  <!-- VIEWER (oculto) -->
   <main class="layout hidden" id="viewer">
     <section class="controls">
-      <h2>Controles</h2>
+      <h2 data-i18n="panel-title">Panel de control</h2>
 
-      <button id="btn-mic">🎙️ Activar micrófono</button>
+      <button id="btn-mic">🎙️ <span data-i18n="btn-mic">Activar micrófono</span></button>
 
       <label>
-        🪄 Suavizado
+        🪄 <span data-i18n="lbl-smoothing">Suavizado</span>
         <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.6" />
       </label>
 
       <label>
-        📶 Barras
+        📶 <span data-i18n="lbl-bins">Barras</span>
         <input id="bins" type="range" min="16" max="96" step="8" value="48" />
       </label>
 
       <div class="xr-buttons">
-        <h3>🌐 Realidad extendida</h3>
+        <h3>🌐 <span data-i18n="xr-title">Realidad extendida</span></h3>
         <button id="btn-ar" class="xr ar">🟣 AR</button>
         <button id="btn-vr" class="xr vr">🟠 VR</button>
-        <p id="xr-status" class="xr-status">Sin sesión XR</p>
+        <p id="xr-status" class="xr-status" data-i18n="xr-status">Sin sesión XR</p>
       </div>
 
-      <button id="close-viewer" class="secondary">⬅️ Volver</button>
+      <button id="close-viewer" class="secondary block">⬅️ <span data-i18n="back">Volver al inicio</span></button>
 
-      <p class="note">AR/VR requiere HTTPS y navegador con WebXR.</p>
+      <p class="note" data-i18n="note">AR/VR requiere HTTPS y navegador con WebXR.</p>
     </section>
 
     <section class="view">
       <canvas id="three-canvas"></canvas>
     </section>
   </main>
+
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Buscar en la página..." />
+      <button id="search-close">Cerrar</button>
+    </div>
+  </div>
 
   <footer class="footer">
     📚© Neotech EduLab — Educación Inmersiva · 🛠️Prohibida su copia y/o reproducción
