@@ -1,4 +1,4 @@
-// app.js v2 - landing + inclusivo + demo + presets + XR badge + log
+// app.js final - asegura que el botón sí abre el viewer y que hay canvas
 import * as THREE from "https://unpkg.com/three@0.161.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.161.0/examples/jsm/controls/OrbitControls.js";
 
@@ -22,7 +22,6 @@ const btnLang = document.getElementById("btn-lang");
 const btnFocus = document.getElementById("btn-focus");
 const btnSearch = document.getElementById("btn-search");
 
-// viewer controls
 const canvas = document.getElementById("three-canvas");
 const btnMic = document.getElementById("btn-mic");
 const btnDemo = document.getElementById("btn-demo");
@@ -46,7 +45,6 @@ let sourceNode = null;
 let wavePlane, wavePlaneGeo;
 let currentLang = "es";
 let useDemo = false;
-let demoPhase = 0;
 
 function logEvent(msg) {
   if (!logList) return;
@@ -54,13 +52,11 @@ function logEvent(msg) {
   const time = new Date().toLocaleTimeString();
   li.textContent = `[${time}] ${msg}`;
   logList.prepend(li);
-  // limit
   if (logList.childNodes.length > 40) {
     logList.removeChild(logList.lastChild);
   }
 }
 
-// show viewer
 function showViewer() {
   hero.classList.add("hidden");
   viewer.classList.remove("hidden");
@@ -71,6 +67,7 @@ function showViewer() {
     logEvent("3D inicializado");
   }
 }
+
 if (openViewer) openViewer.addEventListener("click", showViewer);
 if (openViewerNav) openViewerNav.addEventListener("click", showViewer);
 if (closeViewer) closeViewer.addEventListener("click", () => {
@@ -79,7 +76,7 @@ if (closeViewer) closeViewer.addEventListener("click", () => {
   logEvent("Volvió al inicio");
 });
 
-// inclusive base
+// inclusive controls
 if (btnHome) btnHome.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 if (btnTheme) btnTheme.addEventListener("click", () => document.body.classList.toggle("theme-light"));
 if (btnPlus) btnPlus.addEventListener("click", () => {
@@ -201,7 +198,7 @@ function applyLang() {
 }
 applyLang();
 
-// XR badge detection
+// detect XR
 (async () => {
   if (!xrBadge) return;
   if (!navigator.xr) {
@@ -225,7 +222,7 @@ applyLang();
   }
 })();
 
-// 3D viewer
+// 3D
 function init3D() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
@@ -235,7 +232,6 @@ function init3D() {
 
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   resizeRenderer();
-
   renderer.xr.enabled = true;
 
   controls = new OrbitControls(camera, renderer.domElement);
@@ -247,7 +243,7 @@ function init3D() {
   dir.position.set(3, 5, 2);
   scene.add(dir);
 
-  // malla reactiva
+  // malla
   wavePlaneGeo = new THREE.PlaneGeometry(6, 6, 48, 48);
   const waveMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color("hsl(200, 80%, 35%)"),
@@ -285,7 +281,7 @@ function createBars(count) {
   }
 }
 
-// micrófono
+// mic
 btnMic.addEventListener("click", async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -301,9 +297,8 @@ btnMic.addEventListener("click", async () => {
     useDemo = false;
     logEvent("Micrófono activado");
   } catch (err) {
-    console.error(err);
     xrStatus.textContent = (currentLang === "es" ? "No se pudo acceder al micrófono: " : "Cannot access mic: ") + err.message;
-    logEvent("Error micrófono: " + err.message);
+    logEvent("Error mic: " + err.message);
   }
 });
 
@@ -334,7 +329,6 @@ presetRainbow.addEventListener("click", () => {
   logEvent("Preset arcoíris aplicado");
 });
 presetDense.addEventListener("click", () => {
-  // hacer la malla más densa
   if (wavePlane) {
     const newGeo = new THREE.PlaneGeometry(6, 6, 80, 80);
     wavePlane.geometry.dispose();
@@ -348,13 +342,13 @@ presetSpace.addEventListener("click", () => {
   logEvent("Preset fondo espacio aplicado");
 });
 
-// AR real
+// AR
 btnAR.addEventListener("click", async () => {
   if (!navigator.xr) {
     xrStatus.textContent = currentLang === "es"
       ? "navigator.xr no disponible (HTTPS / WebXR necesario)"
       : "navigator.xr not available (HTTPS / WebXR needed)";
-    logEvent("navigator.xr no disponible");
+    logEvent("AR: navigator.xr no disponible");
     return;
   }
   const supported = await navigator.xr.isSessionSupported("immersive-ar");
@@ -377,13 +371,13 @@ btnAR.addEventListener("click", async () => {
   }
 });
 
-// VR real
+// VR
 btnVR.addEventListener("click", async () => {
   if (!navigator.xr) {
     xrStatus.textContent = currentLang === "es"
       ? "navigator.xr no disponible (HTTPS / WebXR necesario)"
       : "navigator.xr not available (HTTPS / WebXR needed)";
-    logEvent("navigator.xr no disponible");
+    logEvent("VR: navigator.xr no disponible");
     return;
   }
   const supported = await navigator.xr.isSessionSupported("immersive-vr");
@@ -415,9 +409,7 @@ function render() {
   t += 0.015;
 
   let audioLevel = 0;
-
   if (useDemo) {
-    // generar datos falsos pero lindos
     audioLevel = 0.4 + 0.3 * Math.sin(t * 2.0);
     bars.forEach((mesh, i) => {
       const v = 0.3 + 0.6 * Math.abs(Math.sin(t * 2 + i * 0.2));
@@ -441,7 +433,6 @@ function render() {
     audioLevel = audioLevel / currentBins;
   }
 
-  // animar malla
   if (wavePlaneGeo) {
     const pos = wavePlaneGeo.attributes.position;
     for (let i = 0; i < pos.count; i++) {

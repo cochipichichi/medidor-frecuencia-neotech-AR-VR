@@ -30,6 +30,7 @@
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero-content">
       <h2 data-i18n="hero-title">Visualizador de frecuencia 3D</h2>
@@ -61,6 +62,7 @@
     </div>
   </section>
 
+  <!-- FEATURES -->
   <section class="features" id="features">
     <article class="feature">
       <h3>🎙️ <span data-i18n="feat1-title">Captura en vivo</span></h3>
@@ -76,6 +78,7 @@
     </article>
   </section>
 
+  <!-- VIEWER (oculto al inicio) -->
   <main class="layout hidden" id="viewer">
     <section class="controls">
       <h2 data-i18n="panel-title">Panel de control</h2>
@@ -118,10 +121,12 @@
     </section>
 
     <section class="view">
+      <!-- este canvas es el que se veía en blanco si no estaba -->
       <canvas id="three-canvas"></canvas>
     </section>
   </main>
 
+  <!-- overlay de búsqueda -->
   <div class="search-overlay" id="search-overlay">
     <div class="search-box">
       <input type="text" id="search-input" placeholder="Buscar en la página..." />
